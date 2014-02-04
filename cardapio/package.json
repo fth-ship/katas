@@ -1,0 +1,18 @@
+{
+  "name": "cardapio",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/**/*.test.js"
+  },
+  "author": "Kaique da Silva <kaique.developer@gmail.com>",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "should": "~3.1.2",
+    "fth-random": "0.0.5"
+  }
+}
