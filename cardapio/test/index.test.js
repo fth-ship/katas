@@ -1,4 +1,4 @@
-var menu = require('../');
+var menu = require('../').call( this );
 var should = require('should');
 var random = require('fth-random');
 

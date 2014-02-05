@@ -1,29 +1,26 @@
-var menu = exports;
-var allowList = menu.allowList = [];
-var denyList = menu.denyList = [];
-
 function allowItemHandler ( input ) {
+  var self = this;
   var out = false; 
   out = !( input.indexOf( '!' ) === 0 );
   return out;
 }
-menu.allowItem = allowItemHandler;
 
 function denyItemHandler ( input ) {
+  var self = this;
   var out = false;
-  out = !allowItemHandler( input );
+  out = !allowItemHandler.call( self, input );
   return out;
 }
-menu.denyItem = denyItemHandler;
 
 function isItemHandler ( input ) {
+  var self = this;
   var out = false;
   out = (/^[!]?[a-z]{0,19}$/).test( input );
   return out;
 }
-menu.isItem = isItemHandler;
 
 function removeNegationHandler ( input ) {
+  var self = this;
   var out = input;
   var hasNegationChar = input.indexOf( '!' ) === 0;
 
@@ -33,29 +30,29 @@ function removeNegationHandler ( input ) {
 
   return out;
 }
-menu.removeNegation = removeNegationHandler;
 
 function itemIsDeniedHandler ( input ) {
+  var self = this;
   var out = false; 
-  out = !!( ~denyList.indexOf( input ) );
+  out = !!( ~self.denyList.indexOf( input ) );
   return out;
 }
-menu.itemIsDenied = itemIsDeniedHandler;
 
 function itemIsAllowedHandler ( input ) {
+  var self = this;
   var out = false;
-  if ( !itemIsDeniedHandler( input ) ) {
+  if ( !itemIsDeniedHandler.call( self, input ) ) {
     out = true;
   }
   return out;
 }
-menu.itemIsAllowed = itemIsAllowedHandler;
 
 function pushAllowedItemHandler ( input ) {
-  var out = allowList;
+  var self = this;
+  var out = self.allowList;
   var allowToPush = ( 
     isItemHandler( input ) && ( 
-      allowItemHandler( input ) 
+      allowItemHandler.call( self, input ) 
     ) 
   );
 
@@ -65,32 +62,52 @@ function pushAllowedItemHandler ( input ) {
 
   return out;
 }
-menu.pushAllowedItem = pushAllowedItemHandler;
 
 function pushDeniedItemHandler ( input ) {
-  var out = denyList;
+  var self = this;
+  var out = self.denyList;
   var allowToPush = ( 
-    isItemHandler( input ) && ( 
-      denyItemHandler( input ) 
+    isItemHandler.call( self, input ) && ( 
+      denyItemHandler.call( self, input ) 
     ) 
   );
 
   if ( allowToPush ) {
-    out.push( removeNegationHandler( input ) );  
+    out.push( removeNegationHandler.call( self, input ) );  
   }
 
   return out;
 }
-menu.pushDeniedItem = pushDeniedItemHandler;
 
 function countAllowListHandler () {
-  var out = allowList.length;
+  var self = this;
+  var out = self.allowList.length;
   return out;
 }
-menu.countAllowList = countAllowListHandler;
 
 function countDenyListHandler () {
-  var out = denyList.length;
+  var self = this;
+  var out = self.denyList.length;
   return out;
 }
-menu.countDenyList = countDenyListHandler;
+
+function mainHandler () {
+  var menu = {};  
+
+  menu.allowList = [];
+  menu.denyList = [];
+
+  menu.allowItem = allowItemHandler.bind( menu );
+  menu.denyItem = denyItemHandler.bind( menu );
+  menu.isItem = isItemHandler.bind( menu );
+  menu.removeNegation = removeNegationHandler.bind( menu );
+  menu.itemIsDenied = itemIsDeniedHandler.bind( menu );
+  menu.itemIsAllowed = itemIsAllowedHandler.bind( menu );
+  menu.pushAllowedItem = pushAllowedItemHandler.bind( menu );
+  menu.pushDeniedItem = pushDeniedItemHandler.bind( menu );
+  menu.countAllowList = countAllowListHandler.bind( menu );
+  menu.countDenyList = countDenyListHandler.bind( menu );
+
+  return menu;
+}
+module.exports = exports = mainHandler;
